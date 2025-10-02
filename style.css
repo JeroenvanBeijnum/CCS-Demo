@@ -703,6 +703,120 @@ input[type="text"]:focus {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* Authentication Styles */
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.auth-button {
+  width: 100%;
+  background: linear-gradient(90deg, #ffe259 0%, #ffa751 100%);
+  color: #7a4c00;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 167, 81, 0.12);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 0.5px;
+  margin-top: 1rem;
+}
+
+.auth-button:hover {
+  background: linear-gradient(90deg, #ffa751 0%, #ffe259 100%);
+  color: #a85c00;
+  box-shadow: 0 4px 16px rgba(255, 167, 81, 0.18);
+  transform: scale(1.02);
+}
+
+.form-switch {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+.form-switch a {
+  color: #0077ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-switch a:hover {
+  text-decoration: underline;
+}
+
+.message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.user-welcome {
+  font-weight: 600;
+  color: #0077ff;
+}
+
+.logout-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #b71c1c;
+}
+
+input[type="email"], 
+input[type="password"] {
+  padding: 0.8rem;
+  border: 2px solid #cfd8e3;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f9fbfd;
+}
+
+input[type="email"]:focus, 
+input[type="password"]:focus {
+  border-color: #0077ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.1);
+}
+
 @media (max-width: 768px) {
   body {
     font-size: 1rem;
