@@ -127,6 +127,7 @@ input[type="text"]:focus {
   justify-content: center;
   position: relative;
   text-align: center;
+  z-index: 1;
 }
 .basket-text {
   display: block;
@@ -420,6 +421,8 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  z-index: 2;
+  position: relative;
 }
 
 .nav-links a {
