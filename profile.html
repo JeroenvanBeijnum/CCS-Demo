@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - Fruit Shop</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header role="banner">
+      <div class="header-center">
+        <a href="index.html" class="logo" aria-label="Go to homepage">
+          <img
+            src="img/fruit-shop-logo.webp"
+            class="logo-img"
+            alt="Fruit Shop Logo"
+          />
+          <span class="products-text" style="text-align: center">
+            View Products
+          </span>
+        </a>
+        <nav role="navigation" aria-label="Main navigation">
+          <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="bundles.html">Bundles</a>
+            <a href="personality-quiz.html" class="quiz-link">🌟 Fruit Quiz</a>
+            <a href="subscription.html" class="subscription-link">🍎 Subscription</a>
+            <a href="profile.html" class="active">My Profile</a>
+          </div>
+          <a
+            href="basket.html"
+            class="basket-link"
+            aria-label="View shopping basket"
+            style="position: relative"
+          >
+            <img
+              src="img/basket-icon.png"
+              class="basket-img"
+              alt="Shopping basket icon"
+            />
+            <span class="basket-text">View shopping basket</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+    
+    <main id="main-content" role="main">
+      <div class="content-box">
+        <h1>My Profile</h1>
+        <div id="profile-content">
+          <div id="login-required" style="display: none;">
+            <p>Please <a href="login.html">log in</a> to view your profile.</p>
+          </div>
+          
+          <div id="profile-form" style="display: none;">
+            <form id="updateProfileForm" class="auth-form">
+              <div class="form-group">
+                <label for="profile-name">Full Name</label>
+                <input type="text" id="profile-name" name="name" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="profile-email">Email</label>
+                <input type="email" id="profile-email" name="email" required readonly>
+                <small style="color: #666;">Email cannot be changed</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="profile-address">Address</label>
+                <input type="text" id="profile-address" name="address" required placeholder="Enter your delivery address">
+              </div>
+              
+              <button type="submit" class="auth-button">Update Profile</button>
+            </form>
+            
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+              <h3>Account Information</h3>
+              <p><strong>Member since:</strong> <span id="member-since"></span></p>
+              <p><strong>User ID:</strong> <span id="user-id"></span></p>
+            </div>
+          </div>
+        </div>
+        
+        <div id="message" class="message" style="display: none;"></div>
+      </div>
+    </main>
+    
+    <script src="shop.js"></script>
+    <script src="auth.js"></script>
+    <script>
+      function initProfile() {
+        if (!window.authManager) {
+          setTimeout(initProfile, 100);
+          return;
+        }
+        
+        const loginRequired = document.getElementById('login-required');
+        const profileForm = document.getElementById('profile-form');
+        
+        if (!authManager.isLoggedIn()) {
+          loginRequired.style.display = 'block';
+          profileForm.style.display = 'none';
+          return;
+        }
+        
+        // User is logged in, show profile form
+        loginRequired.style.display = 'none';
+        profileForm.style.display = 'block';
+        
+        // Populate form with current user data
+        const user = authManager.getCurrentUser();
+        if (user) {
+          document.getElementById('profile-name').value = user.name || '';
+          document.getElementById('profile-email').value = user.email || '';
+          document.getElementById('profile-address').value = user.address || '';
+          document.getElementById('member-since').textContent = user.createdAt ? 
+            new Date(user.createdAt).toLocaleDateString() : 'Unknown';
+          document.getElementById('user-id').textContent = user.id || 'Unknown';
+        }
+      }
+      
+      // Handle profile update
+      document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!authManager.isLoggedIn()) {
+          showMessage('Please log in to update your profile', 'error');
+          return;
+        }
+        
+        const name = document.getElementById('profile-name').value.trim();
+        const address = document.getElementById('profile-address').value.trim();
+        
+        if (!name) {
+          showMessage('Please enter your full name', 'error');
+          return;
+        }
+        
+        if (!address) {
+          showMessage('Please enter your address', 'error');
+          return;
+        }
+        
+        // Update user data using the AuthManager method
+        const success = authManager.updateUserProfile({
+          name: name,
+          address: address
+        });
+        
+        if (success) {
+          showMessage('Profile updated successfully!', 'success');
+        } else {
+          showMessage('Error updating profile. Please try logging in again.', 'error');
+        }
+      });
+      
+      function showMessage(text, type = 'info') {
+        const messageDiv = document.getElementById('message');
+        if (!messageDiv) return;
+
+        messageDiv.textContent = text;
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.display = 'block';
+
+        if (type === 'error') {
+          setTimeout(() => {
+            messageDiv.style.display = 'none';
+          }, 5000);
+        } else if (type === 'success') {
+          setTimeout(() => {
+            messageDiv.style.display = 'none';
+          }, 3000);
+        }
+      }
+      
+      initProfile();
+    </script>
+  </body>
+</html>

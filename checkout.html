@@ -89,6 +89,30 @@
     <script src="auth.js"></script>
     <script>
       renderBasket();
+      
+      // Auto-populate form with user data if logged in
+      function populateUserInfo() {
+        if (window.authManager && window.authManager.isLoggedIn()) {
+          const user = window.authManager.getCurrentUser();
+          if (user) {
+            document.getElementById("name").value = user.name || '';
+            document.getElementById("address").value = user.address || '';
+          }
+        }
+      }
+      
+      // Wait for authManager to be available, then populate
+      function initCheckout() {
+        if (window.authManager) {
+          populateUserInfo();
+        } else {
+          // Wait a bit longer for authManager to initialize
+          setTimeout(initCheckout, 100);
+        }
+      }
+      
+      initCheckout();
+      
       document.getElementById("checkoutForm").onsubmit = function (e) {
         e.preventDefault();
         document.getElementById("successMsg").style.display = "block";

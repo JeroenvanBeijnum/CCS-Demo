@@ -120,6 +120,7 @@ class AuthManager {
     
     const name = document.getElementById('register-name').value;
     const email = document.getElementById('register-email').value;
+    const address = document.getElementById('register-address').value;
     const password = document.getElementById('register-password').value;
     const confirmPassword = document.getElementById('register-confirm').value;
 
@@ -131,6 +132,11 @@ class AuthManager {
 
     if (!this.validateEmail(email)) {
       this.showMessage('Please enter a valid email address', 'error');
+      return;
+    }
+
+    if (!address.trim()) {
+      this.showMessage('Please enter your address', 'error');
       return;
     }
 
@@ -156,6 +162,7 @@ class AuthManager {
       id: Date.now().toString(),
       name: name.trim(),
       email: email,
+      address: address.trim(),
       password: password,
       createdAt: new Date().toISOString()
     };
@@ -201,13 +208,25 @@ class AuthManager {
     existingAuthLinks.forEach(link => link.remove());
 
     if (this.currentUser) {
-      // User is logged in - show user info and logout
+      // User is logged in - show profile link and user info
+      const profileLink = document.createElement('a');
+      profileLink.href = 'profile.html';
+      profileLink.className = 'auth-link';
+      profileLink.textContent = 'My Profile';
+      
+      // Add active class if on profile page
+      if (window.location.pathname.includes('profile.html')) {
+        profileLink.classList.add('active');
+      }
+      
       const userInfo = document.createElement('div');
       userInfo.className = 'user-info auth-link';
       userInfo.innerHTML = `
         <span class="user-welcome">Hi, ${this.currentUser.name.split(' ')[0]}!</span>
         <button class="logout-btn">Logout</button>
       `;
+      
+      navLinks.appendChild(profileLink);
       navLinks.appendChild(userInfo);
     } else {
       // User is not logged in - show login link
@@ -286,6 +305,33 @@ class AuthManager {
   // Public method to get current user
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  // Public method to update user profile
+  updateUserProfile(updatedData) {
+    if (!this.currentUser) {
+      return false;
+    }
+
+    const users = this.getStoredUsers();
+    const userIndex = users.findIndex(u => u.id === this.currentUser.id);
+    
+    if (userIndex === -1) {
+      return false;
+    }
+
+    // Update user in storage
+    users[userIndex] = { ...users[userIndex], ...updatedData };
+    this.saveUsers(users);
+
+    // Update current user session
+    this.currentUser = { ...this.currentUser, ...updatedData };
+    this.saveCurrentUser();
+
+    // Update navigation
+    this.updateNavigation();
+
+    return true;
   }
 }
 
