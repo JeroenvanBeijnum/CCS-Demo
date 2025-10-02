@@ -338,13 +338,20 @@ class AuthManager {
 // Initialize auth manager when DOM is loaded
 let authManager;
 
-if (document.readyState !== 'loading') {
+function initializeAuthManager() {
   authManager = new AuthManager();
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    authManager = new AuthManager();
-  });
+  window.authManager = authManager;
+  
+  // Fire a custom event to let other scripts know authManager is ready
+  document.dispatchEvent(new CustomEvent('authManagerReady', {
+    detail: { authManager: authManager }
+  }));
+  
+  console.log('AuthManager initialized and ready');
 }
 
-// Make authManager globally available
-window.authManager = authManager;
+if (document.readyState !== 'loading') {
+  initializeAuthManager();
+} else {
+  document.addEventListener('DOMContentLoaded', initializeAuthManager);
+}
