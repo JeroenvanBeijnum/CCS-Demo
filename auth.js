@@ -203,12 +203,17 @@ class AuthManager {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
 
-    // Remove existing auth links
+    // Remove existing auth links (but not static ones)
     const existingAuthLinks = navLinks.querySelectorAll('.auth-link, .user-info');
     existingAuthLinks.forEach(link => link.remove());
 
     if (this.currentUser) {
-      // User is logged in - show profile link and user info
+      // User is logged in - hide static login link and show profile + user info
+      const staticLoginLink = navLinks.querySelector('a[href="login.html"]:not(.auth-link)');
+      if (staticLoginLink) {
+        staticLoginLink.style.display = 'none';
+      }
+      
       const profileLink = document.createElement('a');
       profileLink.href = 'profile.html';
       profileLink.className = 'auth-link';
@@ -229,18 +234,33 @@ class AuthManager {
       navLinks.appendChild(profileLink);
       navLinks.appendChild(userInfo);
     } else {
-      // User is not logged in - show login link
-      const loginLink = document.createElement('a');
-      loginLink.href = 'login.html';
-      loginLink.className = 'auth-link';
-      loginLink.textContent = 'Login';
+      // User is not logged in - show static login link if it exists, otherwise create one
+      const staticLoginLink = navLinks.querySelector('a[href="login.html"]:not(.auth-link)');
       
-      // Add active class if on login page
-      if (window.location.pathname.includes('login.html')) {
-        loginLink.classList.add('active');
+      if (staticLoginLink) {
+        // Static login link exists, just make sure it's visible
+        staticLoginLink.style.display = '';
+        
+        // Update active class
+        if (window.location.pathname.includes('login.html')) {
+          staticLoginLink.classList.add('active');
+        } else {
+          staticLoginLink.classList.remove('active');
+        }
+      } else {
+        // No static login link, create a dynamic one
+        const loginLink = document.createElement('a');
+        loginLink.href = 'login.html';
+        loginLink.className = 'auth-link';
+        loginLink.textContent = 'Login';
+        
+        // Add active class if on login page
+        if (window.location.pathname.includes('login.html')) {
+          loginLink.classList.add('active');
+        }
+        
+        navLinks.appendChild(loginLink);
       }
-      
-      navLinks.appendChild(loginLink);
     }
   }
 
