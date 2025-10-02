@@ -89,6 +89,62 @@
     <script src="auth.js"></script>
     <script>
       renderBasket();
+      
+      // Auto-populate form with user data if logged in
+      function populateUserInfo() {
+        console.log('Attempting to populate user info...');
+        
+        // Check if authManager exists and user is logged in
+        if (window.authManager && window.authManager.isLoggedIn()) {
+          const user = window.authManager.getCurrentUser();
+          console.log('User found:', user);
+          
+          if (user) {
+            const nameField = document.getElementById("name");
+            const addressField = document.getElementById("address");
+            
+            if (nameField && user.name) {
+              nameField.value = user.name;
+              console.log('Name populated:', user.name);
+            }
+            
+            if (addressField && user.address) {
+              addressField.value = user.address;
+              console.log('Address populated:', user.address);
+            }
+          }
+        } else {
+          console.log('AuthManager not available or user not logged in');
+        }
+      }
+      
+      // Wait for authManager to be available, then populate
+      function initCheckout() {
+        if (window.authManager) {
+          console.log('AuthManager found, populating user info');
+          populateUserInfo();
+        } else {
+          console.log('AuthManager not ready, waiting...');
+          // Wait a bit longer for authManager to initialize
+          setTimeout(initCheckout, 100);
+        }
+      }
+      
+      // Try multiple approaches to ensure we catch when authManager is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing checkout');
+        initCheckout();
+      });
+      
+      // Also try after a short delay in case DOM is already loaded
+      setTimeout(initCheckout, 50);
+      
+      // Listen for a custom event that authManager might fire when ready
+      document.addEventListener('authManagerReady', function() {
+        console.log('AuthManager ready event received');
+        populateUserInfo();
+      });
+      
       document.getElementById("checkoutForm").onsubmit = function (e) {
         e.preventDefault();
         document.getElementById("successMsg").style.display = "block";
